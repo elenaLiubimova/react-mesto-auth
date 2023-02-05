@@ -30,7 +30,6 @@ const EditProfilePopup = ({ onUpdateUser, isOpen, onClose }) => {
   }
 
   return (
-    // <FormValidatorContext.Provider>
     <PopupWithForm
       name="profile"
       title="Редактировать профиль"
@@ -70,7 +69,6 @@ const EditProfilePopup = ({ onUpdateUser, isOpen, onClose }) => {
         <span className="edit-form__item-error job-input-error"></span>
       </label>
     </PopupWithForm>
-    // </FormValidatorContext.Provider>
   );
 };
 

@@ -8,6 +8,10 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
+import Login from "./Login";
+import Register from "./Register";
+import InfoTooltip from "./InfoTooltip";
+import success from "../images/success.svg"
 
 const App = () => {
   // Переменная состояния попапа установки аватара
@@ -126,14 +130,17 @@ const App = () => {
     <CurrentUserContext.Provider value={{ currentUser, cards }}>
       <>
         <Header />
-        <Main
+        {/* <Main
           onEditProfile={handleEditProfileClick}
           onAddPlace={handleAddPlaceClick}
           onEditAvatar={handleEditAvatarClick}
           onCardClick={handleCardClick}
           onCardLike={handleCardLike}
           onCardDelete={handleCardDelete}
-        />
+        /> */}
+        {/* <Login title="Вход" buttonText="Войти"/> */}
+        {/* <Register title="Регистрация" buttonText="Заркгистрироваться"/> */}
+        <InfoTooltip infoTooltipIcon={success} infoTooltipDescription={'Вы успешно зарегистрировались!'}/>
         <Footer />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
