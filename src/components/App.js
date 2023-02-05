@@ -11,7 +11,9 @@ import AddPlacePopup from "./AddPlacePopup";
 import Login from "./Login";
 import Register from "./Register";
 import InfoTooltip from "./InfoTooltip";
-import success from "../images/success.svg"
+import success from "../images/success.svg";
+import { Navigate, Route, Routes } from "react-router-dom";
+import ProtectedRouteElement from "./ProtectedRoute";
 
 const App = () => {
   // Переменная состояния попапа установки аватара
@@ -26,6 +28,8 @@ const App = () => {
   const [currentUser, setCurrentUser] = useState({});
   // Переменная состояния для массива карточек
   const [cards, setCards] = useState([]);
+  // Переменная статуса пользователя
+  const [loggedIn, setLoggedIn] = useState(false);
 
   // Обработчик лайка карточки
   function handleCardLike(card) {
@@ -130,18 +134,59 @@ const App = () => {
     <CurrentUserContext.Provider value={{ currentUser, cards }}>
       <>
         <Header />
-        {/* <Main
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onEditAvatar={handleEditAvatarClick}
-          onCardClick={handleCardClick}
-          onCardLike={handleCardLike}
-          onCardDelete={handleCardDelete}
-        /> */}
-        {/* <Login title="Вход" buttonText="Войти"/> */}
-        {/* <Register title="Регистрация" buttonText="Заркгистрироваться"/> */}
-        <InfoTooltip infoTooltipIcon={success} infoTooltipDescription={'Вы успешно зарегистрировались!'}/>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ProtectedRouteElement
+                element={
+                  <Main
+                    onEditProfile={handleEditProfileClick}
+                    onAddPlace={handleAddPlaceClick}
+                    onEditAvatar={handleEditAvatarClick}
+                    onCardClick={handleCardClick}
+                    onCardLike={handleCardLike}
+                    onCardDelete={handleCardDelete}
+                  />
+                }
+                loggedIn={false}
+              />
+            }
+          />
+          {/* element={
+            //   loggedIn ? 
+            //   <Main
+            //     onEditProfile={handleEditProfileClick}
+            //     onAddPlace={handleAddPlaceClick}
+            //     onEditAvatar={handleEditAvatarClick}
+            //     onCardClick={handleCardClick}
+            //     onCardLike={handleCardLike}
+            //     onCardDelete={handleCardDelete}
+            //   /> : <Navigate to="/sign-in" replace={true} />
+            // } */}
+          <Route
+            path="/sign-up"
+            element={
+              <Register title="Регистрация" buttonText="Зарегистрироваться" />
+            }
+          />
+          <Route
+            path="/sign-in"
+            element={<Login title="Вход" buttonText="Войти" />}
+          />
+          <Route
+            path="*"
+            element={
+              loggedIn ? (
+                <Navigate to="/" />
+              ) : (
+                <Navigate to="/sign-in" replace={true} />
+              )
+            }
+          />
+        </Routes>
         <Footer />
+        {/* <InfoTooltip infoTooltipIcon={success} infoTooltipDescription={'Вы успешно зарегистрировались!'}/> */}
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onUpdateUser={handleUpdateUser}
