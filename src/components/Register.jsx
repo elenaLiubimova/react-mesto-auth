@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import * as auth from "./Auth";
+import { useNavigate } from "react-router-dom";
 
-const Register = ({ title, buttonText }) => {
+const Register = ({ handleRegister }) => {
   const [formValue, setFormValue] = useState({
     email: "",
     password: "",
@@ -19,16 +19,16 @@ const Register = ({ title, buttonText }) => {
   const handleSubmit = (evt) => {
     evt.preventDefault();
     const { email, password } = formValue;
-    auth.register(password, email);
+    handleRegister(email, password);
   };
 
   return (
     <section className="reg-auth">
       <form className="reg-auth-form" onSubmit={handleSubmit} noValidate>
-        <h2 className="reg-auth-form__title">{title}</h2>
+        <h2 className="reg-auth-form__title">Регистрация</h2>
         <input
           className="reg-auth-form__item"
-          type="text"
+          type="email"
           placeholder="Email"
           name="email"
           value={formValue.email || ""}
@@ -37,7 +37,7 @@ const Register = ({ title, buttonText }) => {
         />
         <input
           className="reg-auth-form__item"
-          type="text"
+          type="password"
           placeholder="Пароль"
           name="password"
           value={formValue.password || ""}
@@ -49,7 +49,7 @@ const Register = ({ title, buttonText }) => {
           type="submit"
           aria-label="Кнопка регистрации"
         >
-          {buttonText}
+          Зарегистрироваться
         </button>
         <span className="reg-auth-form__description">
           Уже зарегистрированы?

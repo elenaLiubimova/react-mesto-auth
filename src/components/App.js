@@ -12,8 +12,9 @@ import Login from "./Login";
 import Register from "./Register";
 import InfoTooltip from "./InfoTooltip";
 import success from "../images/success.svg";
-import { Navigate, Route, Routes } from "react-router-dom";
-import ProtectedRouteElement from "./ProtectedRoute";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
+import * as auth from "../utils/auth";
 
 const App = () => {
   // Переменная состояния попапа установки аватара
@@ -30,6 +31,10 @@ const App = () => {
   const [cards, setCards] = useState([]);
   // Переменная статуса пользователя
   const [loggedIn, setLoggedIn] = useState(false);
+
+  const [userData, setUserData] = useState({email:"", password:""});
+
+  const navigate = useNavigate();
 
   // Обработчик лайка карточки
   function handleCardLike(card) {
@@ -130,6 +135,35 @@ const App = () => {
       .catch((error) => console.log(`Ошибка: ${error}`));
   }
 
+  function handleRegister(email, password) {
+    auth
+      .register(email, password)
+      .then((res) => {
+        navigate("/", { replace: true });
+        return res;
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function handleAuthorize(email, password) {
+    return auth
+      .authorize(email, password)
+      .then((data) => {
+        console.log(data);
+        // if (data.jwt) {
+        //   localStorage.setItem("token", data.token);
+        //   setUserData({
+        //     email: data.user.email,
+        //     password: data.user.password,
+        //   })
+        //   return data;
+        // }
+        setLoggedIn(true);
+        navigate("/", { replace: true });
+      })
+      .catch((err) => console.log(err));
+  }
+
   return (
     <CurrentUserContext.Provider value={{ currentUser, cards }}>
       <>
@@ -138,41 +172,27 @@ const App = () => {
           <Route
             path="/"
             element={
-              <ProtectedRouteElement
-                element={
-                  <Main
-                    onEditProfile={handleEditProfileClick}
-                    onAddPlace={handleAddPlaceClick}
-                    onEditAvatar={handleEditAvatarClick}
-                    onCardClick={handleCardClick}
-                    onCardLike={handleCardLike}
-                    onCardDelete={handleCardDelete}
-                  />
-                }
-                loggedIn={false}
+              <ProtectedRoute
+                component={Main}
+                onEditProfile={handleEditProfileClick}
+                onAddPlace={handleAddPlaceClick}
+                onEditAvatar={handleEditAvatarClick}
+                onCardClick={handleCardClick}
+                onCardLike={handleCardLike}
+                onCardDelete={handleCardDelete}
+                loggedIn={loggedIn}
               />
             }
           />
-          {/* element={
-            //   loggedIn ? 
-            //   <Main
-            //     onEditProfile={handleEditProfileClick}
-            //     onAddPlace={handleAddPlaceClick}
-            //     onEditAvatar={handleEditAvatarClick}
-            //     onCardClick={handleCardClick}
-            //     onCardLike={handleCardLike}
-            //     onCardDelete={handleCardDelete}
-            //   /> : <Navigate to="/sign-in" replace={true} />
-            // } */}
           <Route
             path="/sign-up"
             element={
-              <Register title="Регистрация" buttonText="Зарегистрироваться" />
+              <Register handleRegister={handleRegister} />
             }
           />
           <Route
             path="/sign-in"
-            element={<Login title="Вход" buttonText="Войти" />}
+            element={<Login handleAuthorize={handleAuthorize} />}
           />
           <Route
             path="*"
