@@ -1,5 +1,7 @@
 .header {
   position: relative;
+  display: flex;
+  justify-content: space-between;
   
   padding: 45px 0 41px 0;
 }

@@ -32,7 +32,7 @@ const App = () => {
   // Переменная статуса пользователя
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const [userData, setUserData] = useState({email:"", password:""});
+  // const [userData, setUserData] = useState({email:"", password:""});
 
   const navigate = useNavigate();
 
@@ -64,8 +64,24 @@ const App = () => {
       .catch((error) => console.log(`Ошибка: ${error}`));
   }
 
+  //Функция проверки токена
+  function tokenCheck() {
+    if (localStorage.getItem("token")) {
+      const token = localStorage.getItem("token");
+      if (token) {
+        auth.checkToken(token).then((res) => {
+          if (res) {
+            setLoggedIn(true);
+            navigate("/", { replace: true });
+          }
+        });
+      }
+    }
+  }
+
   // Функция эффекта для данных профиля и карточки
   useEffect(() => {
+    tokenCheck();
     Promise.all([api.getProfileInfo(), api.getInitialCards()])
       .then(([currentUser, cards]) => {
         setCurrentUser(currentUser);
@@ -149,17 +165,11 @@ const App = () => {
     return auth
       .authorize(email, password)
       .then((data) => {
-        console.log(data);
-        // if (data.jwt) {
-        //   localStorage.setItem("token", data.token);
-        //   setUserData({
-        //     email: data.user.email,
-        //     password: data.user.password,
-        //   })
-        //   return data;
-        // }
-        setLoggedIn(true);
-        navigate("/", { replace: true });
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          setLoggedIn(true);
+          navigate("/", { replace: true });
+        }
       })
       .catch((err) => console.log(err));
   }
@@ -186,9 +196,7 @@ const App = () => {
           />
           <Route
             path="/sign-up"
-            element={
-              <Register handleRegister={handleRegister} />
-            }
+            element={<Register handleRegister={handleRegister} />}
           />
           <Route
             path="/sign-in"
