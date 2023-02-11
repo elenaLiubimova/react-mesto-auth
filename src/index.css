@@ -7,6 +7,7 @@
 @import url(./blocks/root/root.css);
 
 @import url(./blocks/header/header.css);
+@import url(./blocks/header/__navigate-button/header__navigate-button.css);
 
 @import url(./blocks/logo/logo.css);
 
@@ -74,6 +75,7 @@
 @import url(./blocks/reg-auth-form/__button/reg-auth-form__button.css);
 @import url(./blocks/reg-auth-form/__item/reg-auth-form__item.css);
 @import url(./blocks/reg-auth-form/__description/reg-auth-form__description.css);
+@import url(./blocks/reg-auth-form/__link/reg-auth-form__link.css);
 
 @import url(./blocks/info-tooltip/info-tooltip.css);
 @import url(./blocks/info-tooltip/_opened/info-tooltip_opened.css);

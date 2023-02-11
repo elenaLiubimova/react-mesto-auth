@@ -1,20 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import logo from "../images/logo.svg";
 
-const Header = ({ currentPath }) => {
+const Header = ({ currentPath, setLoggedIn, userEmail, setUserEmail }) => {
   const navigate = useNavigate();
   let onClickCallback;
 
   function signOut(){
     localStorage.removeItem('token');
+    setLoggedIn(false);
+    setUserEmail("");
     navigate('/sign-in', { replace: true });
   }
 
-  function signIn(){
+  function navigateToSignIn(){
     navigate('/sign-in', { replace: true });
   }
 
-  function register(){
+  function navigateToRegister(){
     navigate('/sign-up', { replace: true });
   }
 
@@ -23,10 +25,10 @@ const Header = ({ currentPath }) => {
       onClickCallback = signOut;
       return "Выйти";
     } else if (currentPath === "/sign-up") {
-      onClickCallback = signIn;
+      onClickCallback = navigateToSignIn;
       return "Войти";
     } else if (currentPath === "/sign-in") {
-      onClickCallback = register;
+      onClickCallback = navigateToRegister;
       return "Регистрация";
     }
   }
@@ -36,7 +38,8 @@ const Header = ({ currentPath }) => {
   return (
     <header className="header header-container">
       <img className="logo" src={logo} alt="Лого сервиса Mesto" />
-      <p onClick={onClickCallback}>{headerNavigation}</p>
+      <p>{userEmail}</p>
+      <button className="header__navigate-button" onClick={onClickCallback}>{headerNavigation}</button>
     </header>
   );
 }

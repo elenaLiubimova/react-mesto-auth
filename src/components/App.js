@@ -12,6 +12,7 @@ import Login from "./Login";
 import Register from "./Register";
 import InfoTooltip from "./InfoTooltip";
 import success from "../images/success.svg";
+import fail from "../images/fail.svg";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import * as auth from "../utils/auth";
@@ -33,11 +34,13 @@ const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   // Переменная состояния для тултипа регистрации
   const [isInfoTooltipOpen, setInfoTooltipOpen] = useState(false);
-  // Переменная состояния для навигации в шапке
-  // const [headerNavigation, setHeaderNavigation] = useState('Регистрация');
-  const currentPath = window.location.pathname;
 
-  // const [userData, setUserData] = useState({email:"", password:""});
+  const [infoTooltipIcon, setinfoTooltipIcon] = useState(null);
+  const [infoTooltipDescription, setinfoTooltipDescription] = useState("");
+
+  const [userEmail, setUserEmail] = useState("");
+
+  const currentPath = window.location.pathname;
 
   const navigate = useNavigate();
 
@@ -76,12 +79,21 @@ const App = () => {
       if (token) {
         auth.checkToken(token).then((res) => {
           if (res) {
+            setUserEmail(res.data.email);
             setLoggedIn(true);
             navigate("/", { replace: true });
           }
         });
       }
     }
+  }
+
+  // Функция вывода ошибки при неудачной регистрации или входе
+  function showError(err) {
+    console.log(err);
+    setinfoTooltipIcon(fail);
+    setinfoTooltipDescription("Что-то пошло не так! Попробуйте еще раз.");
+    setInfoTooltipOpen(true);
   }
 
   // Функция эффекта для данных профиля и карточки
@@ -161,10 +173,13 @@ const App = () => {
     auth
       .register(email, password)
       .then((res) => {
+        setinfoTooltipIcon(success);
+        setinfoTooltipDescription("Вы успешно зарегистрировались");
+        setInfoTooltipOpen(true);
         navigate("/", { replace: true });
         return res;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => showError(err));
   }
 
   function handleAuthorize(email, password) {
@@ -175,15 +190,21 @@ const App = () => {
           localStorage.setItem("token", data.token);
           setLoggedIn(true);
           navigate("/", { replace: true });
+          setUserEmail(email);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => showError(err));
   }
 
   return (
     <CurrentUserContext.Provider value={{ currentUser, cards }}>
       <>
-        <Header currentPath={currentPath}/>
+        <Header
+          currentPath={currentPath}
+          setLoggedIn={setLoggedIn}
+          setUserEmail={setUserEmail}
+          userEmail={userEmail}
+        />
         <Routes>
           <Route
             path="/"
@@ -222,8 +243,8 @@ const App = () => {
         <Footer />
         <InfoTooltip
           isOpen={isInfoTooltipOpen}
-          infoTooltipIcon={success}
-          infoTooltipDescription={"Вы успешно зарегистрировались!"}
+          infoTooltipIcon={infoTooltipIcon}
+          infoTooltipDescription={infoTooltipDescription}
           onClose={closeAllPopups}
         />
         <EditProfilePopup

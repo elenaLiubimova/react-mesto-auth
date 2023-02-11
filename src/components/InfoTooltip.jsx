@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const InfoTooltip = ({ infoTooltipIcon, infoTooltipDescription, isOpen, onClose }) => {
+  function handleEscClose(evt) {
+    if (evt.key === "Escape") {
+      onClose();
+    }
+  }
+  
+  useEffect(() => {
+    document.addEventListener("keydown", handleEscClose);
+  });
+
   return (
     <div
       className={
@@ -8,8 +18,9 @@ const InfoTooltip = ({ infoTooltipIcon, infoTooltipDescription, isOpen, onClose 
           ? `info-tooltip info-tooltip_opened info-tooltip_success`
           : `info-tooltip info-tooltip_success`
       }
+      onClick={onClose}
     >
-      <div className="info-tooltip__container">
+      <div className="info-tooltip__container" onClick={(evt) => evt.stopPropagation()}>
         <img
           className="info-tooltip__icon"
           src={infoTooltipIcon}

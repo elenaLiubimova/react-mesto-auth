@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = ({ handleRegister }) => {
   const [formValue, setFormValue] = useState({
@@ -53,7 +53,7 @@ const Register = ({ handleRegister }) => {
         </button>
         <span className="reg-auth-form__description">
           Уже зарегистрированы?
-          <a> Войти</a>
+          <Link to="/sign-in" className="reg-auth-form__link"> Войти</Link>
         </span>
       </form>
     </section>
