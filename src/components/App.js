@@ -31,6 +31,11 @@ const App = () => {
   const [cards, setCards] = useState([]);
   // Переменная статуса пользователя
   const [loggedIn, setLoggedIn] = useState(false);
+  // Переменная состояния для тултипа регистрации
+  const [isInfoTooltipOpen, setInfoTooltipOpen] = useState(false);
+  // Переменная состояния для навигации в шапке
+  // const [headerNavigation, setHeaderNavigation] = useState('Регистрация');
+  const currentPath = window.location.pathname;
 
   // const [userData, setUserData] = useState({email:"", password:""});
 
@@ -116,6 +121,7 @@ const App = () => {
     setAvatarPopupOpen(false);
     setProfilePopupOpen(false);
     setAddPlacePopupOpen(false);
+    setInfoTooltipOpen(false);
   }
 
   // Обработчик добавления новой карточки
@@ -177,7 +183,7 @@ const App = () => {
   return (
     <CurrentUserContext.Provider value={{ currentUser, cards }}>
       <>
-        <Header />
+        <Header currentPath={currentPath}/>
         <Routes>
           <Route
             path="/"
@@ -214,7 +220,12 @@ const App = () => {
           />
         </Routes>
         <Footer />
-        {/* <InfoTooltip infoTooltipIcon={success} infoTooltipDescription={'Вы успешно зарегистрировались!'}/> */}
+        <InfoTooltip
+          isOpen={isInfoTooltipOpen}
+          infoTooltipIcon={success}
+          infoTooltipDescription={"Вы успешно зарегистрировались!"}
+          onClose={closeAllPopups}
+        />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onUpdateUser={handleUpdateUser}

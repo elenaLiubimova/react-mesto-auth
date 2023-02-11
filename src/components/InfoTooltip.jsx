@@ -1,13 +1,12 @@
 import React from "react";
 
-const InfoTooltip = ({ infoTooltipIcon, infoTooltipDescription }) => {
+const InfoTooltip = ({ infoTooltipIcon, infoTooltipDescription, isOpen, onClose }) => {
   return (
     <div
       className={
-        "info-tooltip info-tooltip_opened info-tooltip_type_success"
-        // isOpen
-        //   ? `info-tooltip info-tooltip_opened info-tooltip_success`
-        //   : `info-tooltip info-tooltip_success`
+        isOpen
+          ? `info-tooltip info-tooltip_opened info-tooltip_success`
+          : `info-tooltip info-tooltip_success`
       }
     >
       <div className="info-tooltip__container">
@@ -21,6 +20,7 @@ const InfoTooltip = ({ infoTooltipIcon, infoTooltipDescription }) => {
           className="close-button"
           type="button"
           aria-label="Кнопка закрытия тултипа"
+          onClick={onClose}
         ></button>
       </div>
     </div>
