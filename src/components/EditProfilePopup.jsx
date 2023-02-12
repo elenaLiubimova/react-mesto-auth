@@ -6,8 +6,6 @@ const EditProfilePopup = ({ onUpdateUser, isOpen, onClose }) => {
   const { currentUser } = useContext(CurrentUserContext);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [nameInputError, setNameInputError] = useState("");
-  const [descriptionInputError, setDescriptionInputError] = useState("");
 
   useEffect(() => {
     setName(currentUser.name);
@@ -16,12 +14,10 @@ const EditProfilePopup = ({ onUpdateUser, isOpen, onClose }) => {
 
   function handleNameInput(evt) {
     setName(evt.target.value);
-    setNameInputError(evt.target.validationMessage);
   }
 
   function handleDescriptionInput(evt) {
     setDescription(evt.target.value);
-    setDescriptionInputError(evt.target.validationMessage);
   }
 
   function handleSubmit(evt) {
@@ -44,11 +40,7 @@ const EditProfilePopup = ({ onUpdateUser, isOpen, onClose }) => {
     >
       <label className="edit-form__field">
         <input
-          className={
-            nameInputError
-              ? "edit-form__item edit-form__item_type_error"
-              : "edit-form__item"
-          }
+          className="edit-form__item"
           id="name-input"
           value={name || ""}
           onChange={handleNameInput}
@@ -59,15 +51,11 @@ const EditProfilePopup = ({ onUpdateUser, isOpen, onClose }) => {
           maxLength="40"
           required
         />
-        <span className="edit-form__item-error name-input-error">{nameInputError}</span>
+        <span className="edit-form__item-error name-input-error"></span>
       </label>
       <label className="edit-form__field">
         <input
-          className={
-            descriptionInputError
-              ? "edit-form__item edit-form__item_type_error"
-              : "edit-form__item"
-          }
+          className="edit-form__item"
           id="job-input"
           type="text"
           name="job"
@@ -78,7 +66,7 @@ const EditProfilePopup = ({ onUpdateUser, isOpen, onClose }) => {
           maxLength="200"
           required
         />
-        <span className="edit-form__item-error job-input-error">{descriptionInputError}</span>
+        <span className="edit-form__item-error job-input-error"></span>
       </label>
     </PopupWithForm>
   );

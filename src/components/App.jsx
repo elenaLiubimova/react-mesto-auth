@@ -34,12 +34,13 @@ const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   // Переменная состояния для тултипа регистрации
   const [isInfoTooltipOpen, setInfoTooltipOpen] = useState(false);
-
+  // Переменная состояния для иконки тултипа
   const [infoTooltipIcon, setinfoTooltipIcon] = useState(null);
+  // Переменная состояния для текста тултипа
   const [infoTooltipDescription, setinfoTooltipDescription] = useState("");
-
+  // Переменная состояния для email пользователя
   const [userEmail, setUserEmail] = useState("");
-
+  // Константа текущего пути для навигации по страницам
   const currentPath = window.location.pathname;
 
   const navigate = useNavigate();
@@ -169,6 +170,7 @@ const App = () => {
       .catch((error) => console.log(`Ошибка: ${error}`));
   }
 
+  // Функция регистрации
   function handleRegister(email, password) {
     auth
       .register(email, password)
@@ -182,6 +184,7 @@ const App = () => {
       .catch((err) => showError(err));
   }
 
+  // Функция авторизации
   function handleAuthorize(email, password) {
     return auth
       .authorize(email, password)
