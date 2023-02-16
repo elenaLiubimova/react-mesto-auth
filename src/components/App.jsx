@@ -21,7 +21,7 @@ const App = () => {
   // Переменная состояния попапа установки аватара
   const [isEditAvatarPopupOpen, setAvatarPopupOpen] = useState(false);
   // Переменная состояния попапа редактирования профиля
-  const [isEditProfilePopupOpen, setProfilePopupOpen] = useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   // Переменная состояния попапа добавления карточки
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = useState(false);
   // Переменная состояния полноразмерной карточки
@@ -40,6 +40,8 @@ const App = () => {
   const [infoTooltipDescription, setinfoTooltipDescription] = useState("");
   // Переменная состояния для email пользователя
   const [userEmail, setUserEmail] = useState("");
+  //Переменная состояния для отслеживания состояния загрузки
+  const [isLoading, setIsLoading] = useState(false);
   // Константа текущего пути для навигации по страницам
   const currentPath = window.location.pathname;
 
@@ -68,7 +70,9 @@ const App = () => {
     api
       .deleteCard(card._id)
       .then(() => {
-        setCards(cards.filter((chekedCard) => chekedCard._id !== card._id));
+        setCards((cards) =>
+          cards.filter((chekedCard) => chekedCard._id !== card._id)
+        );
       })
       .catch((error) => console.log(`Ошибка: ${error}`));
   }
@@ -78,13 +82,16 @@ const App = () => {
     if (localStorage.getItem("token")) {
       const token = localStorage.getItem("token");
       if (token) {
-        auth.checkToken(token).then((res) => {
-          if (res) {
-            setUserEmail(res.data.email);
-            setLoggedIn(true);
-            navigate("/", { replace: true });
-          }
-        });
+        auth
+          .checkToken(token)
+          .then((res) => {
+            if (res) {
+              setUserEmail(res.data.email);
+              setLoggedIn(true);
+              navigate("/", { replace: true });
+            }
+          })
+          .catch((error) => console.log(`Ошибка: ${error}`));
       }
     }
   }
@@ -115,7 +122,7 @@ const App = () => {
 
   // Обработчик кнопки редактирования профиля
   function handleEditProfileClick() {
-    setProfilePopupOpen(!isEditProfilePopupOpen);
+    setIsEditProfilePopupOpen(!isEditProfilePopupOpen);
   }
 
   // Обработчик кнопки добавления карточки
@@ -132,42 +139,48 @@ const App = () => {
   function closeAllPopups() {
     setSelectedCard(null);
     setAvatarPopupOpen(false);
-    setProfilePopupOpen(false);
+    setIsEditProfilePopupOpen(false);
     setAddPlacePopupOpen(false);
     setInfoTooltipOpen(false);
   }
 
   // Обработчик добавления новой карточки
   function handleAddPlaceSubmit(name, link) {
+    setIsLoading(true);
     api
       .addNewCard(name, link)
       .then((newCard) => {
         setCards([newCard, ...cards]);
         closeAllPopups();
       })
-      .catch((error) => console.log(`Ошибка: ${error}`));
+      .catch((error) => console.log(`Ошибка: ${error}`))
+      .finally(() => setIsLoading(false));
   }
 
   // Функция обновления данных профиля
   function handleUpdateUser({ name, about }) {
+    setIsLoading(true);
     api
       .setProfileInfo(name, about)
       .then((currentUser) => {
         setCurrentUser(currentUser);
         closeAllPopups();
       })
-      .catch((error) => console.log(`Ошибка: ${error}`));
+      .catch((error) => console.log(`Ошибка: ${error}`))
+      .finally(() => setIsLoading(false));
   }
 
   // Обработчик попапа смены аватара
   function handleUpdateAvatar(avatar) {
+    setIsLoading(true);
     api
       .changeAvatar(avatar)
       .then((currentUser) => {
         setCurrentUser(currentUser);
         closeAllPopups();
       })
-      .catch((error) => console.log(`Ошибка: ${error}`));
+      .catch((error) => console.log(`Ошибка: ${error}`))
+      .finally(() => setIsLoading(false));
   }
 
   // Функция регистрации
@@ -201,74 +214,75 @@ const App = () => {
 
   return (
     <CurrentUserContext.Provider value={{ currentUser, cards }}>
-      <>
-        <Header
-          currentPath={currentPath}
-          setLoggedIn={setLoggedIn}
-          setUserEmail={setUserEmail}
-          userEmail={userEmail}
+      <Header
+        currentPath={currentPath}
+        setLoggedIn={setLoggedIn}
+        setUserEmail={setUserEmail}
+        userEmail={userEmail}
+      />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute
+              component={Main}
+              onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onEditAvatar={handleEditAvatarClick}
+              onCardClick={handleCardClick}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+              loggedIn={loggedIn}
+            />
+          }
         />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute
-                component={Main}
-                onEditProfile={handleEditProfileClick}
-                onAddPlace={handleAddPlaceClick}
-                onEditAvatar={handleEditAvatarClick}
-                onCardClick={handleCardClick}
-                onCardLike={handleCardLike}
-                onCardDelete={handleCardDelete}
-                loggedIn={loggedIn}
-              />
-            }
-          />
-          <Route
-            path="/sign-up"
-            element={<Register handleRegister={handleRegister} />}
-          />
-          <Route
-            path="/sign-in"
-            element={<Login handleAuthorize={handleAuthorize} />}
-          />
-          <Route
-            path="*"
-            element={
-              loggedIn ? (
-                <Navigate to="/" />
-              ) : (
-                <Navigate to="/sign-in" replace={true} />
-              )
-            }
-          />
-        </Routes>
-        <Footer />
-        <InfoTooltip
-          isOpen={isInfoTooltipOpen}
-          infoTooltipIcon={infoTooltipIcon}
-          infoTooltipDescription={infoTooltipDescription}
-          onClose={closeAllPopups}
+        <Route
+          path="/sign-up"
+          element={<Register handleRegister={handleRegister} />}
         />
-        <EditProfilePopup
-          isOpen={isEditProfilePopupOpen}
-          onUpdateUser={handleUpdateUser}
-          onClose={closeAllPopups}
+        <Route
+          path="/sign-in"
+          element={<Login handleAuthorize={handleAuthorize} />}
         />
+        <Route
+          path="*"
+          element={
+            loggedIn ? (
+              <Navigate to="/" />
+            ) : (
+              <Navigate to="/sign-in" replace={true} />
+            )
+          }
+        />
+      </Routes>
+      <Footer />
+      <InfoTooltip
+        isOpen={isInfoTooltipOpen}
+        infoTooltipIcon={infoTooltipIcon}
+        infoTooltipDescription={infoTooltipDescription}
+        onClose={closeAllPopups}
+      />
+      <EditProfilePopup
+        isOpen={isEditProfilePopupOpen}
+        onUpdateUser={handleUpdateUser}
+        onClose={closeAllPopups}
+        isLoading={isLoading}
+      />
 
-        <EditAvatarPopup
-          isOpen={isEditAvatarPopupOpen}
-          onUpdateAvatar={handleUpdateAvatar}
-          onClose={closeAllPopups}
-        />
+      <EditAvatarPopup
+        isOpen={isEditAvatarPopupOpen}
+        onUpdateAvatar={handleUpdateAvatar}
+        onClose={closeAllPopups}
+        isLoading={isLoading}
+      />
 
-        <AddPlacePopup
-          isOpen={isAddPlacePopupOpen}
-          onAddPlace={handleAddPlaceSubmit}
-          onClose={closeAllPopups}
-        />
-        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-      </>
+      <AddPlacePopup
+        isOpen={isAddPlacePopupOpen}
+        onAddPlace={handleAddPlaceSubmit}
+        onClose={closeAllPopups}
+        isLoading={isLoading}
+      />
+      <ImagePopup card={selectedCard} onClose={closeAllPopups} />
     </CurrentUserContext.Provider>
   );
 };

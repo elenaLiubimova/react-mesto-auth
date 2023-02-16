@@ -2,7 +2,7 @@ const Footer = () => {
   return (
     <footer className="footer container">
       <p className="footer__info" lang="en">
-        &copy; 2022 Mesto Russia
+        &copy; {new Date().getFullYear()} Mesto Russia
       </p>
     </footer>
   );

@@ -9,15 +9,20 @@ const PopupWithForm = ({
   onClose,
   onSubmit,
 }) => {
-  function handleEscClose(evt) {
-    if (evt.key === "Escape") {
-      onClose();
-    }
-  }
 
   useEffect(() => {
-    document.addEventListener("keydown", handleEscClose);
-  });
+    function handleEscClose(evt) {
+      if (evt.key === "Escape") {
+        onClose();
+      }
+    }
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscClose);
+      return () => {
+        document.removeEventListener("keydown", handleEscClose);
+      };
+    }
+  }, [isOpen]);
 
   return (
     <div
@@ -32,7 +37,7 @@ const PopupWithForm = ({
         className={`popup__container popup__container_type_${name}`}
         onClick={(evt) => evt.stopPropagation()}
       >
-        <form className="edit-form" name={name} onSubmit={onSubmit} noValidate>
+        <form className="edit-form" name={name} onSubmit={onSubmit}>
           <h2 className="edit-form__title">{title}</h2>
           {children}
           <button

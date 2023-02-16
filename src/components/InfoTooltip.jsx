@@ -1,15 +1,25 @@
 import React, { useEffect } from "react";
 
-const InfoTooltip = ({ infoTooltipIcon, infoTooltipDescription, isOpen, onClose }) => {
-  function handleEscClose(evt) {
-    if (evt.key === "Escape") {
-      onClose();
-    }
-  }
-  
+const InfoTooltip = ({
+  infoTooltipIcon,
+  infoTooltipDescription,
+  isOpen,
+  onClose,
+}) => {
+
   useEffect(() => {
-    document.addEventListener("keydown", handleEscClose);
-  });
+    function handleEscClose(evt) {
+      if (evt.key === "Escape") {
+        onClose();
+      }
+    }
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscClose);
+      return () => {
+        document.removeEventListener("keydown", handleEscClose);
+      };
+    }
+  }, [isOpen]);
 
   return (
     <div
@@ -20,7 +30,10 @@ const InfoTooltip = ({ infoTooltipIcon, infoTooltipDescription, isOpen, onClose 
       }
       onClick={onClose}
     >
-      <div className="info-tooltip__container" onClick={(evt) => evt.stopPropagation()}>
+      <div
+        className="info-tooltip__container"
+        onClick={(evt) => evt.stopPropagation()}
+      >
         <img
           className="info-tooltip__icon"
           src={infoTooltipIcon}
@@ -32,7 +45,7 @@ const InfoTooltip = ({ infoTooltipIcon, infoTooltipDescription, isOpen, onClose 
           type="button"
           aria-label="Кнопка закрытия тултипа"
           onClick={onClose}
-        ></button>
+        />
       </div>
     </div>
   );

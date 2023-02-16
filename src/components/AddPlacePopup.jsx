@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PopupWithForm from "./PopupWithForm";
 
-const AddPlacePopup = ({ isOpen, onClose, onAddPlace }) => {
+const AddPlacePopup = ({ isOpen, onClose, onAddPlace, isLoading }) => {
   const [name, setName] = useState("");
   const [link, setLink] = useState("");
 
@@ -19,6 +19,11 @@ const AddPlacePopup = ({ isOpen, onClose, onAddPlace }) => {
     onAddPlace(name, link);
   }
 
+  useEffect(() => {
+    setName("");
+    setLink("");
+  }, [isOpen]);
+
   return (
     <PopupWithForm
       name="add-photo"
@@ -26,7 +31,7 @@ const AddPlacePopup = ({ isOpen, onClose, onAddPlace }) => {
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
-      buttonText="Создать"
+      buttonText={isLoading? 'Создание...' : 'Создать'}
     >
       <label className="edit-form__field">
         <input

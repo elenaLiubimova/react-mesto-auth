@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import PopupWithForm from "./PopupWithForm";
 
-const EditAvatarPopup = ({ onUpdateAvatar, isOpen, onClose }) => {
+const EditAvatarPopup = ({ onUpdateAvatar, isOpen, onClose, isLoading }) => {
   const inputRef = useRef();
 
   function handleSubmit(evt) {
@@ -16,7 +16,7 @@ const EditAvatarPopup = ({ onUpdateAvatar, isOpen, onClose }) => {
       title="Обновить аватар"
       isOpen={isOpen}
       onClose={onClose}
-      buttonText="Сохранить"
+      buttonText={isLoading? 'Сохранение...' : 'Сохранить'}
       onSubmit={(evt) => handleSubmit(evt)}
     >
       <label className="edit-form__field">
