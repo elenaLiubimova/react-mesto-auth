@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 const PopupWithForm = ({
   isOpen,
   name,
@@ -9,21 +7,6 @@ const PopupWithForm = ({
   onClose,
   onSubmit,
 }) => {
-
-  useEffect(() => {
-    function handleEscClose(evt) {
-      if (evt.key === "Escape") {
-        onClose();
-      }
-    }
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscClose);
-      return () => {
-        document.removeEventListener("keydown", handleEscClose);
-      };
-    }
-  }, [isOpen]);
-
   return (
     <div
       className={

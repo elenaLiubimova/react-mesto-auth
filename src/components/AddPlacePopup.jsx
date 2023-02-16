@@ -1,27 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useForm } from "../hooks/useForm";
 import PopupWithForm from "./PopupWithForm";
 
 const AddPlacePopup = ({ isOpen, onClose, onAddPlace, isLoading }) => {
-  const [name, setName] = useState("");
-  const [link, setLink] = useState("");
-
-  function handleNameInput(evt) {
-    setName(evt.target.value);
-  }
-
-  function handleLinkInput(evt) {
-    setLink(evt.target.value);
-  }
+  const { values, handleChange, setValues } = useForm({});
 
   function handleSubmit(evt) {
     evt.preventDefault();
 
-    onAddPlace(name, link);
+    onAddPlace(values.name, values.link);
   }
 
   useEffect(() => {
-    setName("");
-    setLink("");
+    setValues({});
   }, [isOpen]);
 
   return (
@@ -31,13 +22,13 @@ const AddPlacePopup = ({ isOpen, onClose, onAddPlace, isLoading }) => {
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
-      buttonText={isLoading? 'Создание...' : 'Создать'}
+      buttonText={isLoading ? "Создание..." : "Создать"}
     >
       <label className="edit-form__field">
         <input
           className="edit-form__item"
-          onChange={handleNameInput}
-          value={name}
+          value={values.name || ""}
+          onChange={handleChange}
           id="place-input"
           type="text"
           name="name"
@@ -51,8 +42,8 @@ const AddPlacePopup = ({ isOpen, onClose, onAddPlace, isLoading }) => {
       <label className="edit-form__field">
         <input
           className="edit-form__item"
-          onChange={handleLinkInput}
-          value={link}
+          value={values.link || ""}
+          onChange={handleChange}
           id="photo-input"
           type="url"
           name="link"

@@ -44,6 +44,13 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   // Константа текущего пути для навигации по страницам
   const currentPath = window.location.pathname;
+  // Переменная состояний попапов
+  const isOpen =
+    isEditAvatarPopupOpen ||
+    isEditProfilePopupOpen ||
+    isAddPlacePopupOpen ||
+    selectedCard ||
+    isInfoTooltipOpen;
 
   const navigate = useNavigate();
 
@@ -113,7 +120,18 @@ const App = () => {
         setCards(cards);
       })
       .catch((error) => console.log(`Ошибка: ${error}`));
-  }, []);
+    function closeByEscape(evt) {
+      if (evt.key === "Escape") {
+        closeAllPopups();
+      }
+    }
+    if (isOpen) {
+      document.addEventListener("keydown", closeByEscape);
+      return () => {
+        document.removeEventListener("keydown", closeByEscape);
+      };
+    }
+  }, [isOpen]);
 
   // Обработчик кнопки редактирования аватара
   function handleEditAvatarClick() {
@@ -282,6 +300,7 @@ const App = () => {
         onClose={closeAllPopups}
         isLoading={isLoading}
       />
+
       <ImagePopup card={selectedCard} onClose={closeAllPopups} />
     </CurrentUserContext.Provider>
   );
