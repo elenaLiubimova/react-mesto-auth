@@ -1,38 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "../hooks/useForm";
 
 const Login = ({ handleAuthorize }) => {
-  const [formValue, setFormValue] = useState({
-    email: "",
-    password: ""
-  });
-
-  const handleChange = (evt) => {
-    const { name, value } = evt.target;
-
-    setFormValue({
-      ...formValue,
-      [name]: value,
-    });
-  };
+  const { values, handleChange } = useForm({});
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    if (!formValue.email || !formValue.password) {
+    
+    if (!values.email || !values.password) {
       return;
     }
-    handleAuthorize(formValue.email, formValue.password);
+    handleAuthorize(values.email, values.password);
   };
 
   return (
     <section className="reg-auth">
-      <form className="reg-auth-form" onSubmit={handleSubmit} noValidate>
+      <form className="reg-auth-form" onSubmit={handleSubmit} >
         <h2 className="reg-auth-form__title">Вход</h2>
         <input
           className="reg-auth-form__item"
           type="email"
           placeholder="Email"
           name="email"
-          value={formValue.email || ""}
+          value={values.email || ""}
           onChange={handleChange}
           required
         />
@@ -41,7 +31,7 @@ const Login = ({ handleAuthorize }) => {
           type="password"
           placeholder="Пароль"
           name="password"
-          value={formValue.password || ""}
+          value={values.password || ""}
           onChange={handleChange}
           required
         />

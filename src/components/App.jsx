@@ -120,18 +120,22 @@ const App = () => {
         setCards(cards);
       })
       .catch((error) => console.log(`Ошибка: ${error}`));
+  }, []);
+
+  // Функция эффекта для Escape
+  useEffect(() => {
     function closeByEscape(evt) {
-      if (evt.key === "Escape") {
+      if(evt.key === 'Escape') {
         closeAllPopups();
       }
     }
-    if (isOpen) {
-      document.addEventListener("keydown", closeByEscape);
+    if(isOpen) {
+      document.addEventListener('keydown', closeByEscape);
       return () => {
-        document.removeEventListener("keydown", closeByEscape);
-      };
+        document.removeEventListener('keydown', closeByEscape);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen])
 
   // Обработчик кнопки редактирования аватара
   function handleEditAvatarClick() {

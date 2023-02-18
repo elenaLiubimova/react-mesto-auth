@@ -1,37 +1,26 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useForm } from "../hooks/useForm";
 
 const Register = ({ handleRegister }) => {
-  const [formValue, setFormValue] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (evt) => {
-    const { name, value } = evt.target;
-
-    setFormValue({
-      ...formValue,
-      [name]: value,
-    });
-  };
+  const { values, handleChange } = useForm({});
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    const { email, password } = formValue;
+    const { email, password } = values;
     handleRegister(email, password);
   };
 
   return (
     <section className="reg-auth">
-      <form className="reg-auth-form" onSubmit={handleSubmit} noValidate>
+      <form className="reg-auth-form" onSubmit={handleSubmit} >
         <h2 className="reg-auth-form__title">Регистрация</h2>
         <input
           className="reg-auth-form__item"
           type="email"
           placeholder="Email"
           name="email"
-          value={formValue.email || ""}
+          value={values.email || ""}
           onChange={handleChange}
           required
         />
@@ -40,7 +29,7 @@ const Register = ({ handleRegister }) => {
           type="password"
           placeholder="Пароль"
           name="password"
-          value={formValue.password || ""}
+          value={values.password || ""}
           onChange={handleChange}
           required
         />
